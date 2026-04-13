@@ -8,7 +8,7 @@ export function TopBar(){
     return(
         <div className="topbar">
             <div className="topbar-title">
-                <span>Dashboard jhkkgskufjgjksdkjfbsj</span>
+                <span>Dashboard</span>
             </div>
 
 

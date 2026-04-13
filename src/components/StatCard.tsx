@@ -1,22 +1,39 @@
+import type { ReactNode } from "react";
 
 
+interface statCardProps{
+    title:string;
+    value:number;
+    icon:ReactNode;
+    subtitle:string;
+    subtitleColor:string;
+    iconColor:string;
+}
 
-
-export function StatCard(){
+export function StatCard({
+    title, 
+    value, 
+    icon,
+    subtitle, 
+    subtitleColor,
+    iconColor
+    }:statCardProps){
 
 
     return(
         <div className="stat-card">
             
             <div className="stat-info">
-                <h3>em progresso</h3>
-                <div className="stat-number">8</div>
-                <div className="stat-sub">subtitulo</div>
+                <h3>{title}</h3>
+                <div className="stat-number">{value}</div>
+                <div className={`stat-sub ${subtitleColor}`} >
+                    {subtitle}
+                </div>
             </div>
 
 
-            <div className="stat-icon">
-                icon
+            <div className={`stat-icon ${iconColor}`} >
+                {icon}
             </div>
 
 
