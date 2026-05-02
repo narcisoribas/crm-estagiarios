@@ -1,6 +1,6 @@
 
 import {Users, Settings2, Square, ListTodo,Briefcase} from "lucide-react"
-
+import { Link } from "react-router-dom"
 
 
 export function Sidebar(){
@@ -19,31 +19,31 @@ export function Sidebar(){
         {/*** NAVIGATION LINKS */}
          <ul className="sidebar-nav">
             <li>
-                <a href="/dashboard">
+                <Link to="/dashboard">
                     <span className="nav-icon"><Square /></span>
                     Dashboard
-                </a>
+                </Link>
             </li>
 
             <li>
-                <a href="/clients">
+                <Link to="/clientes">
                     <span className="nav-icon"><Users /></span>
                     Clientes
-                </a>
+                </Link>
             </li>
 
             <li>
-                <a href="/tasks">
+                <Link to="/tasks">
                     <span className="nav-icon"><ListTodo /></span>
                     Tasks
-                </a>
+                </Link>
             </li>
 
             <li>
-                <a href="/settings">
+                <Link to="/settings">
                     <span className="nav-icon"><Settings2 /></span>
                     Settings
-                </a>
+                </Link>
             </li>
          </ul>
 
