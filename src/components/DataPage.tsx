@@ -1,7 +1,13 @@
+// =============================================
+// DataPage Component
+// Reusable page layout with: title, search input,
+// "Add" button, paginated table and modal form.
+// =============================================
 
-
-import { ReactNode, useMemo, useState } from "react";
-import {Modal} from "./Modal";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import Modal from "./Modal";
 
 export interface Column<T> {
   key: keyof T | string;
@@ -18,7 +24,7 @@ interface DataPageProps<T> {
   columns: Column<T>[];
   searchKeys: (keyof T)[];
   pageSize?: number;
-  renderForm?: (close: () => void) => ReactNode;
+  renderForm: (close: () => void) => ReactNode;
 }
 
 function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
@@ -28,9 +34,6 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-
-
-  console.log("DataPage render", props)
 
   // Filter rows by query against the configured searchable keys
   const filtered = useMemo(() => {
@@ -55,22 +58,22 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
     setPage(1);
   }
 
-  function openModal() {
-    setOpen(true);
-  }
-
   return (
     <div className="dashboard">
       <div className="page-toolbar">
-        <input
-          type="text"
-          className="search-input toolbar-search"
-          placeholder="Pesquisar..."
-          value={query}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
-        <button className="btn-primary" onClick={openModal}>
-          + {addLabel}
+        <div className="search-container toolbar-search">
+          <Search size={16} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Pesquisar..."
+            value={query}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
+        <button className="btn-primary" onClick={() => setOpen(true)}>
+          <Plus size={18} />
+          {addLabel}
         </button>
       </div>
 
@@ -121,7 +124,7 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
               disabled={currentPage === 1}
               onClick={() => setPage(currentPage - 1)}
             >
-              ‹
+              <ChevronLeft size={16} />
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
@@ -137,18 +140,15 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
               disabled={currentPage === totalPages}
               onClick={() => setPage(currentPage + 1)}
             >
-              ›
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
       </div>
 
-
-      {open && (
-        <Modal open={open} title={modalTitle} onClose={() => setOpen(false)}>
-          {renderForm(() => setOpen(false))}
-        </Modal>
-      )}
+      <Modal open={open} title={modalTitle} onClose={() => setOpen(false)}>
+        {renderForm(() => setOpen(false))}
+      </Modal>
     </div>
   );
 }

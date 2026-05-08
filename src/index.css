@@ -1,18 +1,19 @@
-*{
-  margin:0;
-  padding:0;
+/* =============================================
+   GLOBAL STYLES - Simple CSS Reset
+   ============================================= */
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-
-body{
-  font-family: 'Segoe UI', Arial, Geneva, Verdana, sans-serif;
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
   background-color: #f5f6fa;
-  color:#333;
+  color: #333;
   min-height: 100vh;
 }
 
-
-#root{
+#root {
   min-height: 100vh;
 }
