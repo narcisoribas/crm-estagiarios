@@ -1,54 +1,83 @@
-// =============================================
-// ClientsPage
-// Full CRUD-style listing for clients.
-// =============================================
-
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import type { FormEvent } from "react";
 import DataPage from "../components/DataPage";
 import type { Column } from "../components/DataPage";
 
-interface Client {
-  id: number;
-  name: string;
-  email: string;
-  company: string;
-}
+/**
+ * Interface Client
+ * Representa a estrutura de dados de um cliente.
+ */
+import type { Client } from "../models/Client";
+import { GlobalContext } from "../context/GlobalContext";
 
-interface ClientsPageProps {
-  clients: Client[];
-  onAdd: (client: Omit<Client, "id">) => void;
-}
 
-function ClientsPage(props: ClientsPageProps) {
+
+/**
+ * Props do Componente ClientsPage
+ */
+
+
+/**
+ * ClientsPage Component
+ * 
+ * Página de gestão de clientes que utiliza o componente genérico DataPage
+ * para exibir a listagem, permitir pesquisa e adição de novos clientes.
+ */
+function ClientsPage() {
+
+  const {clients, onAdd, getClientes} = useContext(GlobalContext)
+
+  useEffect(()=>{
+    getClientes();
+  },[])
+
+  
+  /**
+   * Configuração das colunas da tabela de clientes.
+   */
   const columns: Column<Client>[] = [
-    { key: "name", label: "Nome", className: "name" },
+    { key: "nome", label: "Nome", className: "name" },
     { key: "email", label: "Email" },
-    { key: "company", label: "Empresa" },
+    { key: "empresa", label: "Empresa" },
   ];
+
+
+  
 
   return (
     <DataPage<Client>
       title="Clientes"
       addLabel="Adicionar Cliente"
       modalTitle="Novo Cliente"
-      rows={props.clients}
+      rows={clients}
       columns={columns}
-      searchKeys={["name", "email", "company"]}
-      renderForm={(close) => <ClientForm onSubmit={props.onAdd} onClose={close} />}
+      searchKeys={["nome", "email", "empresa"]}
+      renderForm={(close) => <ClientForm onSubmit={onAdd} onClose={close} />}
     />
   );
 }
 
+/**
+ * ClientForm Component
+ * 
+ * Formulário interno para criação de um novo cliente, renderizado dentro do modal.
+ */
 function ClientForm(props: { onSubmit: (c: Omit<Client, "id">) => void; onClose: () => void }) {
+  // Estados locais do formulário
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
 
+  /**
+   * Manipulador de submissão do formulário.
+   */
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    // Validação básica
     if (!name.trim() || !email.trim() || !company.trim()) return;
-    props.onSubmit({ name: name.trim(), email: email.trim(), company: company.trim() });
+    
+    // Chama a função de adição e fecha o modal
+    props.onSubmit({ nome: name.trim(), email: email.trim(), empresa: company.trim(), telefone: "", status: "ativo", observacoes: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
     props.onClose();
   }
 

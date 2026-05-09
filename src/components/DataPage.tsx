@@ -1,41 +1,56 @@
-// =============================================
-// DataPage Component
-// Reusable page layout with: title, search input,
-// "Add" button, paginated table and modal form.
-// =============================================
-
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import Modal from "./Modal";
 
+/**
+ * Interface Column
+ * Define a estrutura de cada coluna da tabela no DataPage.
+ */
 export interface Column<T> {
-  key: keyof T | string;
-  label: string;
-  render?: (row: T) => ReactNode;
-  className?: string;
+  key: keyof T | string; // Chave do dado no objeto
+  label: string;         // Rótulo exibido no cabeçalho
+  render?: (row: T) => ReactNode; // Função opcional para renderização personalizada
+  className?: string;    // Classe CSS opcional para a célula
 }
 
+/**
+ * Props do Componente DataPage
+ */
 interface DataPageProps<T> {
-  title: string;
-  addLabel: string;
-  modalTitle: string;
-  rows: T[];
-  columns: Column<T>[];
-  searchKeys: (keyof T)[];
-  pageSize?: number;
-  renderForm: (close: () => void) => ReactNode;
+  title: string;         // Título da seção
+  addLabel: string;      // Texto do botão de adicionar
+  modalTitle: string;    // Título do modal de formulário
+  rows: T[];             // Array de dados para a tabela
+  columns: Column<T>[];  // Configuração das colunas
+  searchKeys: (keyof T)[]; // Chaves usadas para a pesquisa global
+  pageSize?: number;     // Tamanho da página (padrão: 5)
+  renderForm: (close: () => void) => ReactNode; // Função que renderiza o formulário no modal
 }
 
+/**
+ * DataPage Component
+ * 
+ * Um componente genérico reutilizável para páginas de listagem de dados.
+ * Oferece funcionalidades de:
+ * - Pesquisa global em campos específicos
+ * - Paginação de dados
+ * - Tabela dinâmica
+ * - Modal para criação de novos registros
+ */
 function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
   const { title, addLabel, modalTitle, rows, columns, searchKeys, renderForm } = props;
   const pageSize = props.pageSize ?? 5;
 
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(false);
+  // Estados locais para controle de UI e dados
+  const [query, setQuery] = useState(""); // Termo de pesquisa
+  const [page, setPage] = useState(1);    // Página atual
+  const [open, setOpen] = useState(false); // Estado do modal
 
-  // Filter rows by query against the configured searchable keys
+  /**
+   * Lógica de Filtragem (Memoized)
+   * Filtra as linhas com base no termo de pesquisa contra as chaves configuradas.
+   */
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return rows;
@@ -47,12 +62,15 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
     );
   }, [rows, query, searchKeys]);
 
-  // Pagination math
+  /**
+   * Lógica de Paginação
+   */
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * pageSize;
   const pageRows = filtered.slice(start, start + pageSize);
 
+  // Reseta para a primeira página ao pesquisar
   function handleSearch(value: string) {
     setQuery(value);
     setPage(1);
@@ -60,6 +78,7 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
 
   return (
     <div className="dashboard">
+      {/* Barra de ferramentas da página */}
       <div className="page-toolbar">
         <div className="search-container toolbar-search">
           <Search size={16} className="search-icon" />
@@ -77,6 +96,7 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
         </button>
       </div>
 
+      {/* Cartão contendo a tabela */}
       <div className="card">
         <h2 className="card-title">{title}</h2>
 
@@ -111,7 +131,7 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
           </tbody>
         </table>
 
-        {/* Pagination controls */}
+        {/* Controlos de Paginação */}
         <div className="pagination">
           <span className="pagination-info">
             {filtered.length === 0
@@ -146,6 +166,7 @@ function DataPage<T extends { id: number | string }>(props: DataPageProps<T>) {
         </div>
       </div>
 
+      {/* Modal genérico para o formulário de adição */}
       <Modal open={open} title={modalTitle} onClose={() => setOpen(false)}>
         {renderForm(() => setOpen(false))}
       </Modal>

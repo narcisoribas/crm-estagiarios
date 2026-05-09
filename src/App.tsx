@@ -1,13 +1,13 @@
 // =============================================
-// App Component - The Main Component
-// This is the root component of our Mini CRM.
-// It holds all the data and handles routing.
+// App Component - O Componente Principal
+// Este é o componente raiz do Mini CRM.
+// Ele gerencia o estado global dos dados e o roteamento.
 // =============================================
 
 import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// Import our components
+// Importação de componentes estruturais e de layout
 import AppLayout from "./components/AppLayout";
 import DashboardPage from "./pages/DashboardPage";
 import ClientsPage from "./pages/ClientsPage";
@@ -17,21 +17,19 @@ import type { User } from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 
-// Import styles
+// Importação dos estilos globais da aplicação
 import "./styles/app.css";
 
 function App() {
-  // ---- DATA STATE ----
-  const [clients, setClients] = useState([
-    { id: 1, name: "Sarah Chen", email: "sarah@acmecorp.com", company: "Acme Corp" },
-    { id: 2, name: "Marcus Johnson", email: "marcus@novatech.io", company: "NovaTech" },
-    { id: 3, name: "Elena Rodriguez", email: "elena@brightpath.co", company: "BrightPath" },
-    { id: 4, name: "David Kim", email: "david@stellarworks.com", company: "Stellar Works" },
-    { id: 5, name: "Aisha Patel", email: "aisha@cloudnine.dev", company: "CloudNine" },
-    { id: 6, name: "Tomás Almeida", email: "tomas@finlytics.pt", company: "Finlytics" },
-    { id: 7, name: "Yuki Tanaka", email: "yuki@kairo.jp", company: "Kairo" },
-  ]);
+  /**
+   * ---- ESTADO GLOBAL (Simulando uma Base de Dados) ----
+   * Em uma aplicação real, estes dados viriam de uma API (backend).
+   */
 
+  // Estado dos Clientes
+  
+
+  // Estado das Tarefas
   const [tasks, setTasks] = useState<
     { id: number; task: string; client: string; status: "in-progress" | "pending" | "completed" }[]
   >([
@@ -44,6 +42,7 @@ function App() {
     { id: 7, task: "Mobile App MVP", client: "Yuki Tanaka", status: "in-progress" },
   ]);
 
+  // Estado dos Utilizadores (Equipa)
   const [users, setUsers] = useState<User[]>([
     { id: 1, name: "John Doe", email: "john@minicrm.io", role: "Admin" },
     { id: 2, name: "Maria Silva", email: "maria@minicrm.io", role: "Editor" },
@@ -54,38 +53,47 @@ function App() {
     { id: 7, name: "Hiroshi Sato", email: "hiroshi@minicrm.io", role: "Viewer" },
   ]);
 
-  // ---- RENDER ----
+  /**
+   * ---- RENDERIZAÇÃO E ROTEAMENTO ----
+   */
   return (
     <Routes>
-      {/* Rota pública */}
+      {/* Rota pública: Página de Login */}
+      <Route path="/" element={<LoginPage />} />
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Rotas protegidas (via layout) */}
+      {/* Rotas protegidas: Utilizam o AppLayout para manter Sidebar/TopBar consistentes */}
       <Route path="/" element={<AppLayout />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
+        {/* Redirecionamento da raiz para o Dashboard */}
+        <Route element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Página Inicial / Painel de Controlo */}
         <Route 
           path="dashboard" 
-          element={<DashboardPage clients={clients} tasks={tasks} />} 
+          element={<DashboardPage tasks={tasks} />} 
         />
+        
+        {/* Gestão de Clientes */}
         <Route
           path="clients"
           element={
-            <ClientsPage
-              clients={clients}
-              onAdd={(c) => setClients((prev) => [...prev, { ...c, id: Date.now() }])}
-            />
+            <ClientsPage/>
           }
         />
+        
+        {/* Gestão de Tarefas */}
         <Route
           path="tasks"
           element={
             <TasksPage
               tasks={tasks}
-              clients={clients.map((c) => ({ name: c.name }))}
+           
               onAdd={(t) => setTasks((prev) => [...prev, { ...t, id: Date.now() }])}
             />
           }
         />
+        
+        {/* Gestão de Utilizadores (Equipa) */}
         <Route
           path="users"
           element={
@@ -95,10 +103,12 @@ function App() {
             />
           }
         />
+        
+        {/* Definições do Sistema */}
         <Route path="settings" element={<SettingsPage />} />
       </Route>
 
-      {/* Catch-all redir para dashboard */}
+      {/* Rota de fallback: Redireciona qualquer URL desconhecida para o Dashboard */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );

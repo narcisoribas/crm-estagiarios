@@ -19,7 +19,7 @@ interface Task {
 
 interface TasksPageProps {
   tasks: Task[];
-  clients: { name: string }[];
+ 
   onAdd: (task: Omit<Task, "id">) => void;
 }
 
@@ -51,7 +51,7 @@ function TasksPage(props: TasksPageProps) {
       columns={columns}
       searchKeys={["task", "client", "status"]}
       renderForm={(close) => (
-        <TaskForm clients={props.clients} onSubmit={props.onAdd} onClose={close} />
+        <TaskForm clients={[]} onSubmit={props.onAdd} onClose={close} />
       )}
     />
   );

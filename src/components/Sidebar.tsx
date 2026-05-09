@@ -16,9 +16,7 @@ import {
 } from "lucide-react";
 
 // Define the props type
-interface SidebarProps {
-  // activePage e onNavigate removidos para usar react-router-dom
-}
+
 
 function Sidebar() {
   return (

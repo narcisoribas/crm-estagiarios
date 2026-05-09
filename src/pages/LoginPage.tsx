@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Zap } from "lucide-react";
+import { useContext } from "react";
+import { GlobalContext } from "../context/GlobalContext";
 
 function LoginPage() {
+  const {login}=useContext(GlobalContext)
   const [email, setEmail] = useState("admin@minicrm.io");
   const [password, setPassword] = useState("password");
   const navigate = useNavigate();
@@ -12,7 +15,8 @@ function LoginPage() {
     // Simulação de login
     if (email && password) {
       localStorage.setItem("auth", "true");
-      navigate("/dashboard");
+      login({email,password})
+     
     }
   }
 
